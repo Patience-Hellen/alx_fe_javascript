@@ -1,4 +1,4 @@
-// Function to fetch quotes from a mock API
+// Function to fetch quotes from a mock API 
 async function fetchQuotesFromServer() {
     try {
         const response = await fetch("https://jsonplaceholder.typicode.com/posts");
@@ -33,6 +33,11 @@ async function postQuoteToServer(quoteText, category) {
     } catch (error) {
         console.error("Error posting quote:", error);
     }
+}
+
+// Check for the syncQuotes function
+if (typeof syncQuotes !== "function") {
+    console.warn("Warning: syncQuotes function is not defined.");
 }
 
 // Example usage
