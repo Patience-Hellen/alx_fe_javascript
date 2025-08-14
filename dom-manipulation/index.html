@@ -1,21 +1,36 @@
-<!-- Quote Display -->
-<div id="quote-box">
-  <blockquote id="quote-text">Your quote will appear here…</blockquote>
-  <cite id="quote-author">— Author</cite>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote Filter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #quoteDisplay {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f4f4f4;
+            border-radius: 8px;
+        }
+        select {
+            padding: 8px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
 
-<!-- Add Quote -->
-<form id="add-quote-form">
-  <input id="new-quote-text" type="text" placeholder="Quote text" required>
-  <input id="new-quote-author" type="text" placeholder="Author (optional)">
-  <button type="submit">Add Quote</button>
-</form>
+    <h1>Quote Filter</h1>
+    
+    <label for="categorySelect">Choose a category:</label>
+    <select id="categorySelect"></select>
+    
+    <div id="quoteDisplay">Select a category to see a quote.</div>
 
-<!-- Actions -->
-<button id="random-quote">Show Random Quote</button>
-<button id="export-json">Export Quotes (JSON)</button>
-<label for="importFile" style="display:inline-block; cursor:pointer;">
-  <span>Import Quotes (JSON)</span>
-  <input type="file" id="importFile" accept=".json" style="display:none">
-</label>
-<button id="clear-all">Clear All Quotes</button>
+    <script src="script.js"></script>
+</body>
+</html>
