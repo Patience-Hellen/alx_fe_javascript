@@ -35,22 +35,34 @@ async function postQuoteToServer(quoteText, category) {
     }
 }
 
+// Function to sync local quotes with server quotes
+async function syncQuotes() {
+    console.log("Syncing quotes with server...");
+    const serverQuotes = await fetchQuotesFromServer();
+
+    let localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+    // Simple merge: server data takes precedence if IDs match
+    const mergedQuotes = [...serverQuotes, ...localQuotes.filter(lq => 
+        !serverQuotes.some(sq => sq.id === lq.id)
+    )];
+
+    localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
+    console.log("Quotes synced successfully.");
+}
+
 // Function to periodically check for new quotes
 function startQuotePolling(intervalMs = 30000) {
     console.log(`Starting quote polling every ${intervalMs / 1000} seconds...`);
     setInterval(async () => {
         console.log("Checking for new quotes...");
-        await fetchQuotesFromServer();
+        await syncQuotes();
     }, intervalMs);
 }
 
 // Example usage
 (async function () {
-    const quotes = await fetchQuotesFromServer();
-
-    // Post a sample quote
+    await syncQuotes(); // Initial sync
     await postQuoteToServer("This is a sample inspirational quote.", "Inspiration");
-
-    // Start periodic checking for new quotes
-    startQuotePolling(30000); // every 30 seconds
+    startQuotePolling(30000); // Check every 30 seconds
 })();
