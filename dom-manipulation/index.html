@@ -1,49 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-    #quoteDisplay {
-      margin: 20px auto;
-      padding: 15px;
-      border: 2px solid #ccc;
-      border-radius: 8px;
-      max-width: 400px;
-      font-size: 1.2em;
-    }
-    input {
-      margin: 5px;
-      padding: 8px;
-    }
-    button {
-      padding: 8px 15px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>Dynamic Quote Generator</h1>
+<!-- Quote Display -->
+<div id="quote-box">
+  <blockquote id="quote-text">Your quote will appear here…</blockquote>
+  <cite id="quote-author">— Author</cite>
+</div>
 
-  <!-- Quote Display Area -->
-  <div id="quoteDisplay">Click "Show New Quote" to start!</div>
-  
-  <!-- Show New Quote Button -->
-  <button id="newQuote">Show New Quote</button>
+<!-- Add Quote -->
+<form id="add-quote-form">
+  <input id="new-quote-text" type="text" placeholder="Quote text" required>
+  <input id="new-quote-author" type="text" placeholder="Author (optional)">
+  <button type="submit">Add Quote</button>
+</form>
 
-  <!-- Add New Quote Form -->
-  <div style="margin-top:20px;">
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button onclick="addQuote()">Add Quote</button>
-  </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+<!-- Actions -->
+<button id="random-quote">Show Random Quote</button>
+<button id="export-json">Export Quotes (JSON)</button>
+<label for="importFile" style="display:inline-block; cursor:pointer;">
+  <span>Import Quotes (JSON)</span>
+  <input type="file" id="importFile" accept=".json" style="display:none">
+</label>
+<button id="clear-all">Clear All Quotes</button>
