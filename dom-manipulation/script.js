@@ -35,9 +35,13 @@ async function postQuoteToServer(quoteText, category) {
     }
 }
 
-// Check for the syncQuotes function
-if (typeof syncQuotes !== "function") {
-    console.warn("Warning: syncQuotes function is not defined.");
+// Function to periodically check for new quotes
+function startQuotePolling(intervalMs = 30000) {
+    console.log(`Starting quote polling every ${intervalMs / 1000} seconds...`);
+    setInterval(async () => {
+        console.log("Checking for new quotes...");
+        await fetchQuotesFromServer();
+    }, intervalMs);
 }
 
 // Example usage
@@ -46,4 +50,7 @@ if (typeof syncQuotes !== "function") {
 
     // Post a sample quote
     await postQuoteToServer("This is a sample inspirational quote.", "Inspiration");
+
+    // Start periodic checking for new quotes
+    startQuotePolling(30000); // every 30 seconds
 })();
