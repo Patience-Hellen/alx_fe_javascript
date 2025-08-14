@@ -1,62 +1,34 @@
 // script.js
 
-const localStorageKey = "quotes";
-const serverUrl = "https://jsonplaceholder.typicode.com/posts"; // Mock server endpoint
-
-// Fetch quotes from server
+// Function to fetch quotes from the server (mocked for now)
 async function fetchQuotesFromServer() {
     try {
-        const response = await fetch(serverUrl);
+        const response = await fetch('https://api.quotable.io/random');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-
-        // Simulate server data structure
-        const serverQuotes = data.slice(0, 5).map(post => ({
-            id: post.id,
-            text: post.title,
-            source: "Server"
-        }));
-
-        console.log("Fetched from server:", serverQuotes);
-        syncQuotes(serverQuotes);
-
+        return {
+            text: data.content,
+            author: data.author
+        };
     } catch (error) {
-        console.error("Error fetching quotes from server:", error);
+        console.error('Error fetching quote:', error);
+        return {
+            text: "Keep going, you're doing great!",
+            author: "Unknown"
+        };
     }
 }
 
-// Sync quotes between local and server, server takes precedence
-function syncQuotes(serverQuotes) {
-    let localQuotes = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+// Example usage: load a quote into the page
+document.addEventListener("DOMContentLoaded", async () => {
+    const quoteEl = document.getElementById("quote");
+    const authorEl = document.getElementById("author");
 
-    // Conflict resolution: server overwrites matching IDs
-    serverQuotes.forEach(serverQuote => {
-        const index = localQuotes.findIndex(q => q.id === serverQuote.id);
-        if (index !== -1) {
-            localQuotes[index] = serverQuote; // overwrite
-        } else {
-            localQuotes.push(serverQuote); // add new
-        }
-    });
-
-    localStorage.setItem(localStorageKey, JSON.stringify(localQuotes));
-    console.log("Synced local quotes:", localQuotes);
-}
-
-// Add new quote locally
-function addQuote(text) {
-    let localQuotes = JSON.parse(localStorage.getItem(localStorageKey)) || [];
-    const newQuote = {
-        id: Date.now(),
-        text,
-        source: "Local"
-    };
-    localQuotes.push(newQuote);
-    localStorage.setItem(localStorageKey, JSON.stringify(localQuotes));
-    console.log("Added new local quote:", newQuote);
-}
-
-// Periodically fetch and sync every 10 seconds
-setInterval(fetchQuotesFromServer, 10000);
-
-// Initial fetch
-fetchQuotesFromServer();
+    const quoteData = await fetchQuotesFromServer();
+    if (quoteEl && authorEl) {
+        quoteEl.textContent = quoteData.text;
+        authorEl.textContent = `— ${quoteData.author}`;
+    }
+});
