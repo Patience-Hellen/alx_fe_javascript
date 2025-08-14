@@ -49,6 +49,9 @@ async function syncQuotes() {
 
     localStorage.setItem("quotes", JSON.stringify(mergedQuotes));
     console.log("Quotes synced successfully.");
+
+    // UI Notification for sync
+    alert("Quotes synced with server!");
 }
 
 // Function to periodically check for new quotes
