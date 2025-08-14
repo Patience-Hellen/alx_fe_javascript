@@ -1,30 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quote Filter</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quotes Sync Demo</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    input, select, button { padding: 8px; }
+    ul { padding-left: 18px; }
+    .quote { margin: 6px 0; }
+    .muted { color: #666; font-size: 0.9rem; }
+    #syncStatus { margin-left: 10px; font-size: 0.95rem; }
+    .ok { color: #2e7d32; }
+    .warn { color: #b26a00; }
+    .err { color: #c62828; }
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 8px; background: #eee; margin-left: 6px; font-size: 0.75rem; }
+    .controls { margin: 14px 0; }
+    .conflict { border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin: 8px 0; }
+    .conflict h4 { margin: 0 0 8px 0; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+  </style>
 </head>
 <body>
-    <h1>Quote Manager</h1>
+  <h1>Quotes Manager (Simulated Server Sync)</h1>
 
-    <!-- Category Filter -->
-    <label for="categoryFilter">Filter by Category:</label>
-    <select id="categoryFilter" onchange="filterQuotes()">
-        <option value="all">All Categories</option>
-    </select>
+  <!-- Filter -->
+  <div class="row">
+    <label for="categoryFilter"><strong>Filter by Category:</strong></label>
+    <select id="categoryFilter"></select>
+    <span class="muted">(Remembers your last choice)</span>
+  </div>
 
-    <!-- Add Quote Form -->
-    <h2>Add a Quote</h2>
-    <input type="text" id="quoteText" placeholder="Enter quote">
-    <input type="text" id="quoteCategory" placeholder="Enter category">
-    <button onclick="addQuote()">Add Quote</button>
+  <!-- Add Quote -->
+  <div class="row controls">
+    <input id="quoteText" type="text" placeholder="Enter quote text" size="40" />
+    <input id="quoteCategory" type="text" placeholder="Enter category" />
+    <button id="addBtn" type="button">Add Quote</button>
+  </div>
 
-    <!-- Display Quotes -->
-    <h2>Quotes</h2>
-    <ul id="quoteList"></ul>
+  <!-- Sync Controls -->
+  <div class="row controls">
+    <button id="syncBtn" type="button">Sync Now</button>
+    <label>
+      <input id="autoSyncToggle" type="checkbox" />
+      Auto-sync every 30s
+    </label>
+    <span id="syncStatus" class="muted">Not synced yet.</span>
+  </div>
 
-    <!-- Link JS -->
-    <script src="script.js"></script>
+  <!-- Quotes List -->
+  <h2>Quotes</h2>
+  <ul id="quoteList"></ul>
+
+  <!-- Conflict Area -->
+  <h2>Conflicts</h2>
+  <div id="conflictsArea" class="muted">No conflicts detected.</div>
+
+  <script src="script.js"></script>
 </body>
 </html>
