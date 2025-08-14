@@ -174,3 +174,126 @@ document.addEventListener('DOMContentLoaded', () => {
     displayQuoteByIndex(0);
   });
 });
+
+const LS_QUOTES_KEY = 'quotes:v1';
+const LS_SELECTED_CATEGORY_KEY = 'quotes:selectedCategory';
+const SS_LAST_INDEX_KEY = 'quotes:lastViewedIndex';
+
+let quotes = [];
+
+// Example structure for quotes
+// { text: "Quote text", author: "Author", category: "Motivation" }
+
+// ====== DOM ======
+const categoryFilterEl = document.getElementById('categoryFilter');
+
+// ====== Category Functions ======
+function populateCategories() {
+  // Get unique categories from quotes
+  const categories = Array.from(new Set(quotes.map(q => q.category || 'Uncategorized')));
+
+  // Sort alphabetically
+  categories.sort((a, b) => a.localeCompare(b));
+
+  // Add "All Categories" at the start
+  categoryFilterEl.innerHTML = `<option value="all">All Categories</option>`;
+
+  // Append each unique category
+  categories.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat;
+    opt.textContent = cat;
+    categoryFilterEl.appendChild(opt);
+  });
+
+  // Restore last selected category if it exists
+  const savedCat = localStorage.getItem(LS_SELECTED_CATEGORY_KEY);
+  if (savedCat && [...categoryFilterEl.options].some(o => o.value === savedCat)) {
+    categoryFilterEl.value = savedCat;
+  } else {
+    categoryFilterEl.value = 'all';
+  }
+}
+
+function filterQuotes() {
+  const selectedCat = categoryFilterEl.value;
+  localStorage.setItem(LS_SELECTED_CATEGORY_KEY, selectedCat);
+
+  let filtered = quotes;
+  if (selectedCat !== 'all') {
+    filtered = quotes.filter(q => (q.category || 'Uncategorized') === selectedCat);
+  }
+
+  if (filtered.length === 0) {
+    // No quotes in this category
+    quoteTextEl.textContent = `No quotes found for "${selectedCat}"`;
+    quoteAuthorEl.textContent = '';
+    return;
+  }
+
+  // Show a random quote from filtered list
+  const idx = Math.floor(Math.random() * filtered.length);
+  const { text, author } = filtered[idx];
+  quoteTextEl.textContent = text;
+  quoteAuthorEl.textContent = author ? `— ${author}` : '— Unknown';
+}
+
+// ====== Modifying addQuote to include category ======
+function addQuote(text, author, category) {
+  const cleanedText = (text || '').trim();
+  const cleanedAuthor = (author || '').trim();
+  const cleanedCategory = (category || '').trim() || 'Uncategorized';
+
+  if (!cleanedText) return false;
+
+  // Avoid duplicates
+  const exists = quotes.some(q => q.text.trim().toLowerCase() === cleanedText.toLowerCase());
+  if (exists) return false;
+
+  quotes.push({ text: cleanedText, author: cleanedAuthor || 'Unknown', category: cleanedCategory });
+  saveQuotes();
+  populateCategories();
+  return true;
+}
+
+// ====== Modifying import to refresh categories ======
+function importFromJsonFile(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Invalid JSON: expected an array');
+
+      const validIncoming = imported.filter(isValidQuoteObject);
+      const existingTexts = new Set(quotes.map(q => q.text.trim().toLowerCase()));
+
+      const merged = [
+        ...quotes,
+        ...validIncoming.filter(q => !existingTexts.has(q.text.trim().toLowerCase()))
+      ];
+
+      quotes = merged;
+      saveQuotes();
+      populateCategories();
+      alert('Quotes imported successfully!');
+      filterQuotes();
+    } catch (err) {
+      alert('Failed to import: ' + err.message);
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ====== Init ======
+document.addEventListener('DOMContentLoaded', () => {
+  loadQuotes();
+  populateCategories();
+  filterQuotes(); // Start with saved filter
+
+  categoryFilterEl.addEventListener('change', filterQuotes);
+});
